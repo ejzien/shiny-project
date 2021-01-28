@@ -14,12 +14,14 @@ shinyServer(function(input, output){
     makes_by_year <- reactive({
         df %>% filter(yearsold==input$year_sold) %>%
             group_by(yearsold,make) %>% 
-            summarize(make_count=n(),avg_sale=sum(pricesold)) %>% arrange(desc(make_count)) %>% .[1:20,]
+            summarize(make_count=n(),avg_sale=sum(pricesold),distinct_sales=n_distinct(ID)) %>% arrange(desc(make_count))
     })
     
     year_line_graph <- reactive({
         df %>%
-            group_by(yearsold) %>% summarize(avg_sale=sum(pricesold)) %>% ggplot(aes(yearsold,avg_sale)) + geom_line()
+            group_by(yearsold,make) %>% summarize(avg_sale=sum(pricesold)) %>% ggplot(aes(yearsold,avg_sale)) + 
+            geom_line(aes(group=make,color=make)) + labs(x='Year Sold',y='Average Sale Price') + 
+            scale_y_continuous(labels=dollar_format(prefix="$")) + scale_x_continuous(breaks = c(2018, 2019, 2020))
     })
     
     
