@@ -20,13 +20,9 @@ shinyUI(dashboardPage(
             tabItem(tabName = "Tab1",
                     fluidRow(#infoBoxOutput("maxBox"),
                              #infoBoxOutput("minBox"),
-                             infoBoxOutput("avgBox"))
+                             infoBoxOutput("avgBox")),
 
-                    #fluidRow(box(
-                    #    htmlOutput("map"), height = 300
-                    #),
-                    #box(
-                    #    htmlOutput("hist"),height = 300))
+                    fluidRow(plotOutput("year_line", height = "300px"))
             ),
             tabItem(tabName = "Tab2",
                     fluidRow(box(DT::dataTableOutput("most_common_makes"), width = 12))
