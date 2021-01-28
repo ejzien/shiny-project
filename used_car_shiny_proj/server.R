@@ -17,6 +17,11 @@ shinyServer(function(input, output){
             summarize(make_count=n(),avg_sale=sum(pricesold)) %>% arrange(desc(make_count)) %>% .[1:20,]
     })
     
+    year_line_graph <- reactive({
+        df %>%
+            group_by(yearsold) %>% summarize(avg_sale=sum(pricesold)) %>% ggplot(aes(yearsold,avg_sale)) + geom_line()
+    })
+    
     
     # output$data.table <- renderGvis(
     #     gvisGeoChart(state_stat, "state.name", input$year_sold,
@@ -38,6 +43,8 @@ shinyServer(function(input, output){
         DT::datatable(makes_by_year())
     }
     )
+    
+    output$year_line <- renderPlot({year_line_graph()})
     
     output$avgBox <- renderInfoBox(
         infoBox('hello',
