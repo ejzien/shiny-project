@@ -17,26 +17,26 @@ get_mileage_group <- function(m) {
   output=c()
   for (i in 1:length(m)){
     if(m[i]<25000){
-      output[i]='Less Than 25000'} else if (m[i]<50000){
-        output[i]='25000-50000'
+      output[i]=25000} else if (m[i]<50000){
+        output[i]=50000
       } else if (m[i]<75000){
-        output[i]='50000-750000'
+        output[i]=75000
       } else if (m[i]<100000){
-        output[i]='75000-100000'
+        output[i]=100000
       } else if (m[i]<125000){
-        output[i]='100000-125000'
+        output[i]=125000
       } else if (m[i]<150000){
-        output[i]='125000-150000'
+        output[i]=150000
       } else if (m[i]<175000){
-        output[i]='150000-175000'
+        output[i]=175000
       } else if (m[i]<200000){
-        output[i]='175000-200000'
+        output[i]=200000
       } else if (m[i]<225000){
-        output[i]='200000-225000'
+        output[i]=225000
       } else if (m[i]<250000){
-        output[i]='225000-250000'
+        output[i]=250000
       } else {
-        output[i] = 'Greater Than 250000'
+        output[i] = 275000
       }
   }
   return(output)
@@ -66,7 +66,6 @@ df = df %>% filter(year>1950,year<=2020)
 #finding which make/model combinations have >500 unique sales to make sure all sales have a decent sample
 test = df %>% group_by(make,model) %>% summarize(total_count=n()) %>% arrange(desc(total_count)) %>% filter(total_count>=500)
 unique(test$model)
-print(sum(df$pricesold))
 df = inner_join(df,test,by=c("make","model"))
 
 #filtering out cylinder counts where it did not appear to be any comparison for
@@ -78,3 +77,4 @@ df = inner_join(df,cyl_df,by=c("numcylinders"))
 sell_years <- unique(df$yearsold)
 models <- unique(df$model)
 makes <- unique(df$make)
+
