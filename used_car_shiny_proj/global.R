@@ -3,6 +3,7 @@ library(ggplot2)
 library(shiny)
 library(DT)
 library(scales)
+library(plotly)
 
 df_initial = read.csv('./data/used_car_sales.csv')
 df = df_initial
@@ -60,7 +61,7 @@ adjust_year <- function(y) {
 
 #adjusting columns and filtering out years that don't make sense
 df = df %>% mutate(mileage_group=get_mileage_group(mileage),year=adjust_year(year_initial))
-df = df %>% filter(year>1950,year<=2020)
+df = df %>% filter(year>1950,year<=2020,mileage<777777)
 
 
 #finding which make/model combinations have >500 unique sales to make sure all sales have a decent sample
@@ -75,6 +76,12 @@ df = inner_join(df,cyl_df,by=c("numcylinders"))
 
 #getting filter values
 sell_years <- unique(df$yearsold)
-models <- unique(df$model)
 makes <- unique(df$make)
+models <- unique(df$model)
+#models <- df %>% filter(make==input$make) %>% select(model) %>% unique()
 
+# unique(df$numcylinders)
+# colnames(df)
+
+
+#df %>% filter(make%in%c('Ford','Toyota')) %>% select(model) %>% unique()
