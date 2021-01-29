@@ -10,29 +10,26 @@ shinyUI(dashboardPage(
         sidebarMenu(
             menuItem("Overall Metrics", tabName = "Tab1", icon = icon("map")),
             menuItem("Make Based Metrics", tabName = "Tab2", icon = icon("database"))
-        ),
-        selectizeInput("year_sold",
-                       "Select Item to Display",
-                       sell_years)
+        )
+        # selectizeInput("year_sold",
+        #                "Select Item to Display",
+        #                sell_years)
     ),
     dashboardBody(
         tabItems(
             tabItem(tabName = "Tab1",
-                    fluidRow(#infoBoxOutput("maxBox"),
+                    fluidRow(fluidRow(plotOutput("year_line", height = "300px"))),
+                    fluidRow(box(DT::dataTableOutput("raw_overall_data"),width=15))
+                             #infoBoxOutput("maxBox"),
                              #infoBoxOutput("minBox"),
-                             infoBoxOutput("avgBox")),
-
-                    fluidRow(plotOutput("year_line", height = "300px"))
+                             #infoBoxOutput("avgBox")),
+            ),
+            tabItem(tabName = "Tab2",
+                    selectizeInput("make",
+                                   "Make",
+                                   makes),
+                    fluidRow(box(DT::dataTableOutput("make_tab_table"),width=15))
             )
-            # tabItem(tabName = "Tab2",
-            #         fluidRow(#infoBoxOutput("maxBox"),
-            #             #infoBoxOutput("minBox"),
-            #             infoBoxOutput("avgBox")),
-            #         
-            #         fluidRow(plotOutput("year_line", height = "300px"))
-            # )
-            # tabItem(tabName = "Tab2",
-            #         fluidRow(box(DT::dataTableOutput("most_common_makes"), width = 12))
-            # )
         )
     )))
+    
