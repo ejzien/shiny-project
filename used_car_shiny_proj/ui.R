@@ -19,7 +19,7 @@ shinyUI(dashboardPage(
         tabItems(
             tabItem(tabName = "Tab1",
                     #fluidRow(fluidRow(plotOutput("year_line", height = "300px"))),
-                    fluidRow(fluidRow(plotOutput("year_bar", height = "300px"))),
+                    fluidRow(fluidRow(plotlyOutput("year_bar", height = "300px"))),
                     fluidRow(box(DT::dataTableOutput("raw_overall_data"),width=25))
                              #infoBoxOutput("maxBox"),
                              #infoBoxOutput("minBox"),
@@ -29,12 +29,14 @@ shinyUI(dashboardPage(
                     selectizeInput("make",
                                    "Make",
                                    makes),
-                    fluidRow(fluidRow(plotOutput("mileage_line_make"))),
+                    selectizeInput("model","Model",choices=models,multiple=T,selected=c("Bronco","F150")),
+                    fluidRow(fluidRow(plotOutput("milelage_box_make"))),
                     #fluidRow(fluidRow(plotOutput("milelage_plot_make"))),
                     #fluidRow(fluidRow(plotOutput("milelage_box_make"))),
-                    fluidRow(fluidRow(plotOutput("year_made_plot_make"))),
+                    fluidRow(fluidRow(plotlyOutput("year_made_line_make"),height=25))
+                    #fluidRow(fluidRow(plotlyOutput("year_mileage_plot_make"))),
                     #fluidRow(fluidRow(plotOutput("year_line_make"))),
-                    fluidRow(box(DT::dataTableOutput("make_tab_table"),width=25))
+                    #fluidRow(box(DT::dataTableOutput("make_tab_table"),width=25))
             )
         )
     )))
