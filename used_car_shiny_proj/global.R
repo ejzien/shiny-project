@@ -59,15 +59,53 @@ adjust_year <- function(y) {
   return(output)
 }
 
+get_drive_type <- function(d) {
+  output=c()
+  for (i in 1:length(d)){
+    if(grepl('4wd',tolower(d[i]))){
+      output[i]='4 Wheel Drive'} else if (grepl('4dr',tolower(d[i]))){
+        output[i]='4 Wheel Drive'} else if (grepl('4x4',tolower(d[i]))){
+          output[i]='4 Wheel Drive'} else if (grepl('4dr',tolower(d[i]))){
+            output[i]='4 Wheel Drive'} else if (grepl('2dr',tolower(d[i]))){
+              output[i]='2 Wheel Drive'} else if (grepl('2wd',tolower(d[i]))){
+                output[i]='2 Wheel Drive'} else if (grepl('2 wheel drive',tolower(d[i]))){
+                  output[i]='2 Wheel Drive'} else if (grepl('four wheel drive',tolower(d[i]))){
+                    output[i]='4 Wheel Drive'} else if (grepl('5 dr',tolower(d[i]))){
+                      output[i]='5 Wheel Drive'} else if (grepl('rwd',tolower(d[i]))){
+                        output[i]='Rear Wheel Drive'}  else if (grepl('real wheel drive',tolower(d[i]))){
+                          output[i]='Rear Wheel Drive'} else if (grepl('5dr',tolower(d[i]))){
+                            output[i]='5 Wheel Drive'} else if (grepl('rear drive',tolower(d[i]))){
+                              output[i]='Rear Wheel Drive'} else if (grepl('awd',tolower(d[i]))){
+                                output[i]='All Wheel Drive'} else if (grepl('all wheel drive',tolower(d[i]))){
+                                  output[i]='All Wheel Drive'} else if (grepl('6 wheel drive',tolower(d[i]))){
+                                    output[i]='6 Wheel Drive'} else if (grepl('six wheel drive',tolower(d[i]))){
+                                      output[i]='6 Wheel Drive'} else if (grepl('4 wheel drive',tolower(d[i]))){
+                                        output[i]='4 Wheel Drive'} else if (grepl('rear drive',tolower(d[i]))){
+                                          output[i]='Rear Wheel Drive'} else if (grepl('rear wheel',tolower(d[i]))){
+                                            output[i]='Rear Wheel Drive'} else if (grepl('2 wd',tolower(d[i]))){
+                                              output[i]='2 Wheel Drive'} else if (grepl('fwd',tolower(d[i]))){
+                                                output[i]='Front Wheel Drive'} else if (grepl('4 wheel drive',tolower(d[i]))){
+                                                  output[i]='4 Wheel Drive'} else if (grepl('2 wheel',tolower(d[i]))){
+                                                    output[i]='2 Wheel Drive'} else if (grepl('2wheel',tolower(d[i]))){
+                                                      output[i]='2 Wheel Drive'} else if (grepl('2 wheel',tolower(d[i]))){
+                                                        output[i]='2 Wheel Drive'} else if (grepl('front wheel drive',tolower(d[i]))){
+                                                          output[i]='2 Wheel Drive'} else {
+              output[i] = 'remove'
+            }
+  }
+  return(output)
+}
+
 #adjusting columns and filtering out years that don't make sense
-df = df %>% mutate(mileage_group=get_mileage_group(mileage),year=adjust_year(year_initial))
-df = df %>% filter(year>1950,year<=2020,mileage<777777)
+df = df %>% mutate(mileage_group=get_mileage_group(mileage),year=adjust_year(year_initial),drive_type=get_drive_type(drivetype))
+df = df %>% filter(year>1950,year<=2020,mileage<777777,drive_type!='remove')
 
 
 #finding which make/model combinations have >500 unique sales to make sure all sales have a decent sample
 test = df %>% group_by(make,model) %>% summarize(total_count=n()) %>% arrange(desc(total_count)) %>% filter(total_count>=500)
 unique(test$model)
 df = inner_join(df,test,by=c("make","model"))
+
 
 #filtering out cylinder counts where it did not appear to be any comparison for
 cyl_df = df %>% group_by(numcylinders) %>% summarize(total_count=n()) %>% arrange(desc(total_count)) %>% filter(total_count>1)
@@ -80,8 +118,12 @@ makes <- unique(df$make)
 models <- unique(df$model)
 #models <- df %>% filter(make==input$make) %>% select(model) %>% unique()
 
-# unique(df$numcylinders)
+# unique(df$drivetype)
 # colnames(df)
 
-
-#df %>% filter(make%in%c('Ford','Toyota')) %>% select(model) %>% unique()
+# unique(df$drive_type)
+# 
+# 
+# test = df %>% group_by(make,model) %>% summarise(cyl_count=n_distinct(numcylinders),dt_count=n_distinct(drive_type))
+# 
+# test
