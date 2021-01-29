@@ -11,47 +11,48 @@ library(shiny)
 
 shinyServer(function(input, output){
     
-    makes_by_year <- reactive({
-        df %>% filter(yearsold==input$year_sold) %>%
-            group_by(yearsold,make) %>% 
-            summarize(make_count=n(),avg_sale=sum(pricesold),distinct_sales=n_distinct(ID)) %>% arrange(desc(make_count))
+    # makes_by_year <- reactive({
+    #     df %>% filter(yearsold==input$year_sold) %>%
+    #         group_by(yearsold,make) %>% 
+    #         summarize(make_count=n(),avg_sale=sum(pricesold)) %>% arrange(make)
+    # })
+    
+    year_make_data <- reactive({
+        df %>% group_by(yearsold,model,make) %>% 
+            summarize(avg_sale_price=mean(pricesold),max_sale_price=max(pricesold),min_sale_price=min(pricesold),unique_sales=n_distinct(id)) %>% arrange(make)
     })
     
-    year_line_graph <- reactive({
-        df %>%
-            group_by(yearsold,make) %>% summarize(avg_sale=sum(pricesold)) %>% ggplot(aes(yearsold,avg_sale)) + 
-            geom_line(aes(group=make,color=make)) + labs(x='Year Sold',y='Average Sale Price') + 
-            scale_y_continuous(labels=dollar_format(prefix="$")) + scale_x_continuous(breaks = c(2018, 2019, 2020))
+    by_model <- reactive({
+        df %>% filter(make==input$make) %>% group_by(model) %>% 
+            summarize(avg_sale_price=mean(pricesold),max_sale_price=max(pricesold),
+                      min_sale_price=min(pricesold),avg_mileage=mean(mileage),max_mileage=max(mileage),
+                      min_mileage=min(mileage),unique_sales=n_distinct(id))
     })
-    
-    
-    # output$data.table <- renderGvis(
-    #     gvisGeoChart(state_stat, "state.name", input$year_sold,
-    #                  options=list(region="US", displayMode="regions", 
-    #                               resolution="provinces",
-    #                               width="auto", height="auto"))
-    # )
-    
-    #output$hist <- renderGvis(
-    #    gvisHistogram(state_stat[,input$selected, drop=FALSE]))
-    #output$table <- DT::renderDataTable({
-    #    DT::datatable(state_stat, rownames=FALSE) %>% 
-    #        DT::formatStyle(input$selected,  
-    #                        background="skyblue", fontWeight='bold')
-        # Highlight selected column using formatStyle
-    #})
     
     output$most_common_makes <- DT::renderDataTable({
         DT::datatable(makes_by_year())
     }
     )
     
-    output$year_line <- renderPlot({year_line_graph()})
+    output$year_line <- renderPlot({year_make_data() %>% ggplot(aes(yearsold,avg_sale_price)) + 
+            geom_line(aes(group=model,color=model),show.legend=FALSE) + labs(x='Year Sold',y='Average Sale Price') + 
+            scale_y_continuous(labels=dollar_format(prefix="$")) + scale_x_continuous(breaks = c(2018, 2019, 2020)) + 
+            ggtitle('Average Price Of Make Per Year')})
     
-    output$avgBox <- renderInfoBox(
-        infoBox('hello',
-                mean(df[,'pricesold']), 
-                icon = icon("calculator"), fill = TRUE))
+    output$raw_overall_data <- DT::renderDataTable({
+        DT::datatable(year_make_data(),rownames=F,colnames=c('Year Sold','Model','Make','Average Sale Price','Maximum Sale Price','Minimum Sale Price','Total Cars Sold')) %>%
+            formatCurrency(columns=c('avg_sale_price','max_sale_price','min_sale_price'))
+        
+    }
+    )
+    
+    output$make_tab_table <- DT::renderDataTable({
+        DT::datatable(by_model(),rownames=F,
+                      colnames=c('Model','Average Sale Price','Max Sale Price','Min Sale Price','Average Mileage','Max Mileage','Min Mileage','Total Cars Sold')) %>%
+            formatCurrency(columns=c('avg_sale_price','min_sale_price','max_sale_price'))
+        
+    }
+    )
     
     
 })

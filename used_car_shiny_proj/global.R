@@ -60,21 +60,13 @@ adjust_year <- function(y) {
 
 #adjusting columns and filtering out years that don't make sense
 df = df %>% mutate(mileage_group=get_mileage_group(mileage),year=adjust_year(year_initial))
-df = df %>% filter(year>+1950,year<=2020)
-#unique(df$year)
+df = df %>% filter(year>1950,year<=2020)
 
-
-#unique(df$drivetype)
-#colnames(df)
-
-#getting a list of sell years for filters
-sell_years <- unique(df$yearsold)
-
-#unique(df$model)
 
 #finding which make/model combinations have >500 unique sales to make sure all sales have a decent sample
 test = df %>% group_by(make,model) %>% summarize(total_count=n()) %>% arrange(desc(total_count)) %>% filter(total_count>=500)
 unique(test$model)
+print(sum(df$pricesold))
 df = inner_join(df,test,by=c("make","model"))
 
 #filtering out cylinder counts where it did not appear to be any comparison for
@@ -82,12 +74,7 @@ cyl_df = df %>% group_by(numcylinders) %>% summarize(total_count=n()) %>% arrang
 df = inner_join(df,cyl_df,by=c("numcylinders"))
 #dim(df)
 
-#unique(df$model)
-
-
-#count_df = df %>% group_by(drivetype) %>% summarize(total_count=n()) %>% arrange(desc(total_count))
-
-unique(df$make)
-
-
-
+#getting filter values
+sell_years <- unique(df$yearsold)
+models <- unique(df$model)
+makes <- unique(df$make)
