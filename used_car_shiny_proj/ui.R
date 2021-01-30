@@ -58,7 +58,26 @@ shinyUI(dashboardPage(
                              column(width=2,selectizeInput("year_max",
                                                            "Max Year",
                                                            years,
-                                                           selected=2020))),
+                                                           selected=2020)),
+                             column(width=2,selectizeInput("makes2",
+                                                           "Make",
+                                                           c(c('All'),makes),
+                                                           multiple=T,
+                                                           selected='All'))
+                             ),
+                    fluidRow(column(width=2,selectizeInput("xaxis",
+                                                           "X Axis",
+                                                           c('One','Two','Three'))),
+                             column(width=2,selectizeInput("yaxis",
+                                                           "Y Axis",
+                                                           c('One','Two','Three'))),
+                             column(width=2,selectizeInput("color",
+                                                           "Color Variable",
+                                                           c('One','Two','Three'))),
+                             column(width=2,selectizeInput("graph_type",
+                                                           "Graph Type",
+                                                           c('Bar Graph','Scatterplot','Line Graph','Box Plot','Histogram')))
+                    ),
                     fluidRow(box(DT::dataTableOutput("tab_three_raw"),width=25))
             )
         )

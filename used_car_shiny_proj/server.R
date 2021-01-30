@@ -35,6 +35,14 @@ shinyServer(function(input, output, session){
         df %>% filter(make==input$make,model%in%input$model)
     })
     
+    custom_tab_filter <- reactive({
+        if ('All' %in% input$makes2){
+            df %>% filter(year>=input$year_min,year<=input$year_max,sapply(c(pricesold),dollar_format())>=input$price_min,sapply(c(pricesold),dollar_format())<=input$price_max)
+        } else {
+            df %>% filter(make%in%input$makes2,year>=input$year_min,year<=input$year_max,sapply(c(pricesold),dollar_format())>=input$price_min,sapply(c(pricesold),dollar_format())<=input$price_max)
+        }
+    })
+    
     # output$most_common_makes <- DT::renderDataTable({
     #     DT::datatable(makes_by_year())
     # }
@@ -129,7 +137,7 @@ shinyServer(function(input, output, session){
     
     
     output$tab_three_raw <- DT::renderDataTable({
-        DT::datatable(df %>% group_by(yearsold) %>% summarise(avg_price=mean(pricesold)),rownames=F)
+        DT::datatable(custom_tab_filter() %>% group_by(year,make) %>% summarise(avg_price=mean(pricesold)),rownames=F)
     }
     )
 
