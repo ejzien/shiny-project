@@ -5,6 +5,7 @@ library(DT)
 library(scales)
 library(plotly)
 
+
 df_initial = read.csv('./data/used_car_sales.csv')
 df = df_initial
 
@@ -128,4 +129,7 @@ years = sort(unique(df$year))
 # 
 # test
 
+if ('h' %in% c('hi','bye','cat','dog')){
+  print('cool')
+}
 
