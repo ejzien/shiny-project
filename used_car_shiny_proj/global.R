@@ -128,8 +128,3 @@ years = sort(unique(df$year))
 # test = df %>% group_by(make,model) %>% summarise(cyl_count=n_distinct(numcylinders),dt_count=n_distinct(drive_type))
 # 
 # test
-
-if ('h' %in% c('hi','bye','cat','dog')){
-  print('cool')
-}
-

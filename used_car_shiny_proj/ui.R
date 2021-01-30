@@ -17,7 +17,7 @@ shinyUI(dashboardPage(
         tabItems(
             tabItem(tabName = "Tab1",
                     #fluidRow(fluidRow(plotOutput("year_line", height = "300px"))),
-                    fluidRow(fluidRow(align="center",plotlyOutput("year_bar", height = "500px",width=1200))),
+                    fluidRow(align="center",plotlyOutput("year_bar", height = "500px",width=1200)),
                     fluidRow(box(DT::dataTableOutput("raw_overall_data"),width=25))
                              #infoBoxOutput("maxBox"),
                              #infoBoxOutput("minBox"),
@@ -26,7 +26,7 @@ shinyUI(dashboardPage(
             tabItem(tabName = "Tab2",
                     fluidRow(column(width=2,selectizeInput("make",
                                    "Make",
-                                   makes)),
+                                   c(makes,c('All')))),
                              column(width=6,selectizeInput("model",
                                                            "Model",
                                                            choices=models,
