@@ -26,13 +26,9 @@ shinyServer(function(input, output, session){
     })
     
     by_model <- reactive({
-        df %>% filter(make==input$make) %>% group_by(model) %>% 
+        df %>% filter(make==input$make) %>%group_by(model) %>% 
             summarize(avg_sale_price=mean(pricesold),max_sale_price=max(pricesold),
                       min_sale_price=min(pricesold),avg_mileage=mean(mileage),unique_sales=n_distinct(id))
-    })
-    
-    filter_price <- reactive({
-        df %>% filter(pricesold>=input$price_min,pricesold<=input$price_max)
     })
     
     filter_models <- reactive({
@@ -50,14 +46,13 @@ shinyServer(function(input, output, session){
     #         ggtitle('Average Price Of Make Per Year')})
     
     output$year_bar <- renderPlotly({df %>% group_by(make,yearsold) %>% summarise(avg_sale_price=mean(pricesold)) %>% ggplot(aes(make,avg_sale_price)) + 
-            geom_bar(aes(group=yearsold,color=factor(yearsold)),width=0.6,position='dodge',stat='identity',show.legend=TRUE) + labs(x='Car Make',y='Average Sale Price',color="Year") + 
+            geom_bar(aes(group=yearsold,fill=factor(yearsold)),width=0.6,position='dodge',stat='identity',show.legend=TRUE) + labs(x='Car Make',y='Average Sale Price',fill="Yearsold") + 
             scale_y_continuous(labels=dollar_format(prefix="$")) + 
             ggtitle('Average Price Of Make Per Year') + theme(plot.title = element_text(hjust = 0.5))})
     
     output$raw_overall_data <- DT::renderDataTable({
         DT::datatable(year_make_data(),rownames=F,colnames=c('Year Sold','Model','Make','Average Sale Price','Maximum Sale Price','Minimum Sale Price','Average Car Mileage','Total Cars Sold')) %>%
             formatCurrency(columns=c('avg_sale_price','max_sale_price','min_sale_price')) %>% formatRound(columns=c('avg_mileage'))
-        
     }
     )
     
@@ -76,13 +71,13 @@ shinyServer(function(input, output, session){
     #         ggtitle('Price By Mileage Group')})
     
     output$milelage_box_make <- renderPlot({filter_models()  %>% ggplot(aes(factor(mileage_group),pricesold)) +
-            geom_boxplot(aes(color=factor(mileage_group))) + labs(x='Mileage Group',y='Average Car Sale Price') +
+            geom_boxplot(aes(color=factor(mileage_group))) + labs(x='Mileage Group',y='Average Car Sale Price',color='Mileage Group') +
             scale_y_continuous(labels=dollar_format(prefix="$"))+
             ggtitle('Price By Mileage Group') + theme(plot.title = element_text(hjust = 0.5),axis.text.x=element_blank(),axis.title.x=element_blank()) + facet_wrap(~model)})
     
     
     output$year_made_plot_make <- renderPlot({filter_models() %>% ggplot(aes(year,pricesold)) + 
-            geom_point(aes(color=model)) + labs(x='Year Car Was Made',y='Car Sale Price') + 
+            geom_point(aes(color=model)) + labs(x='Year Car Was Made',y='Car Sale Price',color='Model') + 
             scale_y_continuous(labels=dollar_format(prefix="$")) + scale_x_continuous(breaks = seq(1950, 2020, by=10)) + 
             ggtitle('Price By Car Year')+ theme(plot.title = element_text(hjust = 0.5))})
     
@@ -91,6 +86,22 @@ shinyServer(function(input, output, session){
             geom_line(aes(group=model,color=model)) + labs(x='Year',y='Average Sale Price') +
             scale_y_continuous(labels=dollar_format(prefix="$")) + scale_x_continuous(breaks = seq(1950, 2020, by=10)) + 
             ggtitle('Avg Price Sold By Year Car Was Made')+ theme(plot.title = element_text(hjust = 0.5))})
+    
+    output$dt_bar_model <- renderPlotly({filter_models() %>% group_by(model,drive_type) %>%
+            summarise(avg_sale_price=mean(pricesold),dt_count=n_distinct(id)) %>% filter(dt_count>100) %>%
+            ggplot(aes(drive_type,avg_sale_price)) + 
+            geom_bar(aes(group=model,fill=factor(model)),width=0.6,position='dodge',stat='identity',show.legend=TRUE) +
+            labs(x='Car Engine Type',y='Average Sale Price',fill="Model") + 
+            scale_y_continuous(labels=dollar_format(prefix="$")) + 
+            ggtitle('Average Price Of Engine Type') + theme(plot.title = element_text(hjust = 0.5))})
+    
+    output$cyl_bar_model <- renderPlotly({filter_models() %>% group_by(model,numcylinders) %>%
+            summarise(avg_sale_price=mean(pricesold),cyl_count=n_distinct(id)) %>%
+            ggplot(aes(numcylinders,avg_sale_price)) + 
+            geom_bar(aes(group=model,fill=factor(model)),width=0.6,position='dodge',stat='identity',show.legend=TRUE) +
+            labs(x='Car Cylinders',y='Average Sale Price',fill="Model") + 
+            scale_y_continuous(labels=dollar_format(prefix="$")) + 
+            ggtitle('Average Price Of Car Cylinders') + theme(plot.title = element_text(hjust = 0.5))})
     
     
     # output$mileage_line_make <- renderPlotly({df %>% filter(make==input$make) %>% group_by(model,mileage_group) %>%
@@ -116,6 +127,12 @@ shinyServer(function(input, output, session){
     #         scale_y_continuous(breaks=seq(25000, 275000, by=25000)) + scale_x_continuous(breaks = seq(1950, 2020, by=10)) + 
     #         ggtitle('Mileage By Year')})
     
+    
+    output$tab_three_raw <- DT::renderDataTable({
+        DT::datatable(df %>% group_by(yearsold) %>% summarise(avg_price=mean(pricesold)),rownames=F)
+    }
+    )
+
     
 })
 
