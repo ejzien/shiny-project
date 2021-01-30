@@ -97,7 +97,7 @@ get_drive_type <- function(d) {
 }
 
 #adjusting columns and filtering out years that don't make sense
-df = df %>% mutate(mileage_group=get_mileage_group(mileage),year=adjust_year(year_initial),drive_type=get_drive_type(drivetype))
+df = df %>% mutate(mileage_group=get_mileage_group(mileage),year=adjust_year(year_initial),drive_type=get_drive_type(drivetype),numcylinders=paste(numcylinders,'Cyl'))
 df = df %>% filter(year>1950,year<=2020,mileage<777777,drive_type!='remove')
 
 
@@ -116,14 +116,16 @@ df = inner_join(df,cyl_df,by=c("numcylinders"))
 sell_years <- unique(df$yearsold)
 makes <- unique(df$make)
 models <- unique(df$model)
+years = sort(unique(df$year))
 #models <- df %>% filter(make==input$make) %>% select(model) %>% unique()
 
 # unique(df$drivetype)
 # colnames(df)
 
-# unique(df$drive_type)
 # 
 # 
 # test = df %>% group_by(make,model) %>% summarise(cyl_count=n_distinct(numcylinders),dt_count=n_distinct(drive_type))
 # 
 # test
+
+
