@@ -11,7 +11,12 @@ library(shiny)
 
 shinyServer(function(input, output, session){
     observe({
-        updateSelectizeInput(session,"model",choices=df%>%filter(make==input$make)%>% select(model)%>%unique(),selected=df%>%filter(make==input$make)%>% select(model)%>%first())
+        if (input$make=='All'){
+            updateSelectizeInput(session,"model",choices=df%>%select(model)%>%unique(),selected='Camry')
+            #df%>%select(model)%>%first()
+        } else {
+            updateSelectizeInput(session,"model",choices=df%>%filter(make==input$make)%>% select(model)%>%unique(),selected=df%>%filter(make==input$make)%>% select(model)%>%first())
+        }
     })
     
     # makes_by_year <- reactive({
@@ -32,7 +37,11 @@ shinyServer(function(input, output, session){
     })
     
     filter_models <- reactive({
-        df %>% filter(make==input$make,model%in%input$model)
+        if (input$make=='All') {
+            df %>% filter(model%in%input$model)
+        } else {
+            df %>% filter(make==input$make,model%in%input$model)
+        }
     })
     
     custom_tab_filter <- reactive({
