@@ -17,7 +17,7 @@ shinyUI(dashboardPage(
         tabItems(
             tabItem(tabName = "Tab1",
                     fluidRow(align="center",plotlyOutput("year_bar", height = "300px",width=1200)),
-                    fluidRow(fluidRow(plotOutput("mileage_scatter_plot_price", height = "600px")))
+                    fluidRow(align="center",plotOutput("mileage_scatter_plot_price",height="600px",width=1200))
             ),
             tabItem(tabName = "Tab2",
                     fluidRow(column(width=2,selectizeInput("make",
@@ -29,16 +29,10 @@ shinyUI(dashboardPage(
                                                            multiple=T,
                                                            selected=c("Bronco","F150"))),
                     ),
-                    fluidRow(plotOutput("milelage_box_make")),
-                    #fluidRow(fluidRow(plotOutput("mileage_scatter_plot_make"))),
-                    #fluidRow(fluidRow(plotOutput("milelage_box_make"))),
-                    fluidRow(plotlyOutput("year_made_line_make"),height=25),
-                    fluidRow(plotlyOutput("dt_bar_model"),height=25),
-                    fluidRow(plotlyOutput("cyl_bar_model"),height=25)
-                    #fluidRow(box(DT::dataTableOutput("tab_three_raw"),width=25))
-                    #fluidRow(fluidRow(plotlyOutput("year_mileage_plot_make"))),
-                    #fluidRow(fluidRow(plotOutput("year_line_make"))),
-                    #fluidRow(box(DT::dataTableOutput("make_tab_table"),width=25))
+                    fluidRow(align="center",plotOutput("milelage_box_make"),height="300px",width=1200),
+                    fluidRow(align="center",plotlyOutput("year_made_line_make"),height="300px",width=1200),
+                    fluidRow(align="center",plotlyOutput("dt_bar_model"),height="300px",width=1200),
+                    fluidRow(align="center",plotlyOutput("cyl_bar_model"),height="300px",width=1200)
             ),
             tabItem(tabName = "raw_data_table",
                     fluidRow(column(width=2,selectizeInput("price_min",
