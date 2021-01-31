@@ -60,6 +60,29 @@ adjust_year <- function(y) {
   return(output)
 }
 
+get_decade <- function(y) {
+  output=c()
+  for (i in 1:length(y)){
+    temp_y = y[i]
+    if (temp_y<1960){
+      output[i] = '1950s'
+    } else if(temp_y<1970){
+      output[i] = '1960s'
+    } else if(temp_y<1980){
+      output[i] = '1970s'
+    } else if(temp_y<1990){
+      output[i] = '1980s'
+    } else if(temp_y<2000){
+      output[i] = '1990s'
+    } else if(temp_y<2020){
+      output[i] = '2000s'
+    } else {
+      output[i] = '2010s'
+    }
+  }
+  return(output)
+}
+
 get_drive_type <- function(d) {
   output=c()
   for (i in 1:length(d)){
@@ -99,6 +122,7 @@ get_drive_type <- function(d) {
 
 #adjusting columns and filtering out years that don't make sense
 df = df %>% mutate(mileage_group=get_mileage_group(mileage),year=adjust_year(year_initial),drive_type=get_drive_type(drivetype),numcylinders=paste(numcylinders,'Cyl'))
+df = df %>% mutate(decade=get_decade(year))
 df = df %>% filter(year>1950,year<=2020,mileage<777777,drive_type!='remove')
 
 
@@ -121,10 +145,15 @@ years = sort(unique(df$year))
 #models <- df %>% filter(make==input$make) %>% select(model) %>% unique()
 
 # unique(df$drivetype)
-# colnames(df)
+colnames(df)
+dims = c('Make'='make','Model'='model','Year Sold'='yearsold','Mileage Group'='mileage_group',
+           'Car Year'='year','Number Of Cylinders'='numcylinders','Drive Type'='drive_type')
+color_vals = c('Model'='model','Make'='make','Year Sold'='yearsold','Mileage Group'='mileage_group',
+               'Car Year'='year','Number Of Cylinders'='numcylinders','Drive Type'='drive_type')
 
-# 
-# 
-# test = df %>% group_by(make,model) %>% summarise(cyl_count=n_distinct(numcylinders),dt_count=n_distinct(drive_type))
-# 
-# test
+rename_vec = c('year'='Car Year','model'='Model','make'='Make','avg_sale_price'='Average Sale Price',
+               'max_sale_price'='Maximum Sale Price','min_sale_price'='Minimum Sale Price',
+               'avg_mileage'='Average Car Mileage','unique_sales'='Total Cars Sold',
+               'mileage_group'='Mileage Group','yearsold','Year Sold','numcylinders'='Number Of Cylinders',
+               'drive_type'='Drive Type')
+
