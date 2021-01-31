@@ -18,27 +18,27 @@ df$year_initial = df$year
 get_mileage_group <- function(m) {
   output=c()
   for (i in 1:length(m)){
-    if(m[i]<25000){
-      output[i]=25000} else if (m[i]<50000){
-        output[i]=50000
-      } else if (m[i]<75000){
-        output[i]=75000
-      } else if (m[i]<100000){
-        output[i]=100000
-      } else if (m[i]<125000){
-        output[i]=125000
-      } else if (m[i]<150000){
-        output[i]=150000
-      } else if (m[i]<175000){
-        output[i]=175000
-      } else if (m[i]<200000){
-        output[i]=200000
-      } else if (m[i]<225000){
-        output[i]=225000
-      } else if (m[i]<250000){
-        output[i]=250000
+    if(m[i]<=25000){
+      output[i]=25} else if (m[i]<=50000){
+        output[i]=50
+      } else if (m[i]<=75000){
+        output[i]=75
+      } else if (m[i]<=100000){
+        output[i]=100
+      } else if (m[i]<=125000){
+        output[i]=125
+      } else if (m[i]<=150000){
+        output[i]=150
+      } else if (m[i]<=175000){
+        output[i]=175
+      } else if (m[i]<=200000){
+        output[i]=200
+      } else if (m[i]<=225000){
+        output[i]=225
+      } else if (m[i]<=250000){
+        output[i]=250
       } else {
-        output[i] = 275000
+        output[i] = 275
       }
   }
   return(output)
@@ -121,9 +121,9 @@ get_drive_type <- function(d) {
 }
 
 #adjusting columns and filtering out years that don't make sense
-df = df %>% mutate(mileage_group=get_mileage_group(mileage),year=adjust_year(year_initial),drive_type=get_drive_type(drivetype),numcylinders=paste(numcylinders,'Cyl'))
+df = df %>% mutate(mileage_group=get_mileage_group(mileage),miles_thousands=mileage/1000,year=adjust_year(year_initial),drive_type=get_drive_type(drivetype),numcylinders=paste(numcylinders,'Cyl'))
 df = df %>% mutate(decade=get_decade(year))
-df = df %>% filter(year>1950,year<=2020,mileage<777777,drive_type!='remove')
+df = df %>% filter(year>1950,year<=2020,mileage<700000,drive_type!='remove')
 
 
 #finding which make/model combinations have >500 unique sales to make sure all sales have a decent sample
@@ -157,3 +157,4 @@ rename_vec = c('year'='Car Year','model'='Model','make'='Make','avg_sale_price'=
                'mileage_group'='Mileage Group','yearsold','Year Sold','numcylinders'='Number Of Cylinders',
                'drive_type'='Drive Type')
 
+sapply(5,dollar_format())
