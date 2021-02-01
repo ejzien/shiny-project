@@ -60,6 +60,7 @@ adjust_year <- function(y) {
   return(output)
 }
 
+#function for getting the decade based on the year
 get_decade <- function(y) {
   output=c()
   for (i in 1:length(y)){
@@ -83,6 +84,7 @@ get_decade <- function(y) {
   return(output)
 }
 
+#function for getting the drive type for each car based on the input values
 get_drive_type <- function(d) {
   output=c()
   for (i in 1:length(d)){
@@ -142,19 +144,7 @@ sell_years <- unique(df$yearsold)
 makes <- unique(df$make)
 models <- unique(df$model)
 years = sort(unique(df$year))
-#models <- df %>% filter(make==input$make) %>% select(model) %>% unique()
 
-# unique(df$drivetype)
-colnames(df)
 dims = c('Make'='make','Model'='model','Year Sold'='yearsold','Mileage Group'='mileage_group',
            'Car Year'='year','Number Of Cylinders'='numcylinders','Drive Type'='drive_type')
-color_vals = c('Model'='model','Make'='make','Year Sold'='yearsold','Mileage Group'='mileage_group',
-               'Car Year'='year','Number Of Cylinders'='numcylinders','Drive Type'='drive_type')
 
-rename_vec = c('year'='Car Year','model'='Model','make'='Make','avg_sale_price'='Average Sale Price',
-               'max_sale_price'='Maximum Sale Price','min_sale_price'='Minimum Sale Price',
-               'avg_mileage'='Average Car Mileage','unique_sales'='Total Cars Sold',
-               'mileage_group'='Mileage Group','yearsold','Year Sold','numcylinders'='Number Of Cylinders',
-               'drive_type'='Drive Type')
-
-sapply(5,dollar_format())
