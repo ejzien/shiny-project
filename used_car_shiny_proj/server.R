@@ -19,23 +19,6 @@ shinyServer(function(input, output, session){
         }
     })
     
-    # makes_by_year <- reactive({
-    #     df %>% filter(yearsold==input$year_sold) %>%
-    #         group_by(yearsold,make) %>% 
-    #         summarize(make_count=n(),avg_sale=sum(pricesold)) %>% arrange(make)
-    # })
-    
-    year_make_data <- reactive({
-        df %>% group_by(yearsold,model,make) %>% 
-            summarize(avg_sale_price=mean(pricesold),max_sale_price=max(pricesold),min_sale_price=min(pricesold),avg_mileage=mean(mileage),unique_sales=n_distinct(id)) %>% arrange(make)
-    })
-    
-    by_model <- reactive({
-        df %>% filter(make==input$make) %>%group_by(model) %>% 
-            summarize(avg_sale_price=mean(pricesold),max_sale_price=max(pricesold),
-                      min_sale_price=min(pricesold),avg_mileage=mean(mileage),unique_sales=n_distinct(id))
-    })
-    
     filter_models <- reactive({
         if (input$make=='All') {
             df %>% filter(model%in%input$model)
@@ -59,8 +42,8 @@ shinyServer(function(input, output, session){
                 summarise(avg_sale_price=mean(pricesold),max_sale_price=max(pricesold),min_sale_price=min(pricesold),avg_mileage=mean(mileage),unique_sales=n_distinct(id))
     })
     
-    output$year_bar <- renderPlotly({df %>% group_by(make,yearsold) %>% summarise(avg_sale_price=mean(pricesold)) %>% ggplot(aes(make,avg_sale_price)) + 
-            geom_bar(aes(group=yearsold,fill=factor(yearsold)),width=0.6,position='dodge',stat='identity',show.legend=TRUE) + labs(x='Car Make',y='Average Sale Price',fill="Yearsold") + 
+    output$year_bar <- renderPlotly({df %>% group_by(make,yearsold) %>% summarise(avg_sale_price=mean(pricesold),car_count=n_distinct(id)) %>% filter(car_count>5) %>% ggplot(aes(make,avg_sale_price)) + 
+            geom_bar(aes(group=yearsold,fill=factor(yearsold)),width=0.6,position='dodge',stat='identity',show.legend=TRUE) + labs(x='Car Make (At Least 5 Cars Sold In Year)',y='Average Sale Price',fill="Year Sold") + 
             scale_y_continuous(labels=dollar_format(prefix="$")) + 
             ggtitle('Average Price Of Make Per Year') + theme(plot.title = element_text(hjust = 0.5))})
     
